@@ -40,7 +40,7 @@ function main() {
   }
 
   // Delete assets.json to always have a manifest up to date
-  fs.removeSync(paths.appManifest);
+  // fs.removeSync(paths.appManifest);
 
   // Create dev configs using our config factory, passing in razzle file as
   // options.
@@ -51,8 +51,7 @@ function main() {
   const clientCompiler = compile(clientConfig);
   const serverCompiler = compile(serverConfig);
 
-  // Start our server webpack instance in watch mode after assets compile
-  clientCompiler.plugin('done', () => {
+  const startServerCompiler = () =>
     serverCompiler.watch(
       {
         quiet: true,
@@ -61,7 +60,15 @@ function main() {
       /* eslint-disable no-unused-vars */
       stats => {}
     );
-  });
+
+  if (fs.existsSync(paths.appManifest)) {
+    startServerCompiler();
+  } else {
+    // Start our server webpack instance in watch mode after assets compile
+    clientCompiler.plugin('done', () => {
+      startServerCompiler();
+    });
+  }
 
   // Create a new instance of Webpack-dev-server for our client assets.
   // This will actually run on a different port than the users app.

@@ -366,7 +366,7 @@ module.exports = (
           nodeArgs,
         }),
         // Ignore assets.json to avoid infinite recompile bug
-        new webpack.WatchIgnorePlugin([paths.appManifest]),
+        // new webpack.WatchIgnorePlugin([paths.appManifest]),
       ];
     }
   }
